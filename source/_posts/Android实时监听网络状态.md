@@ -10,7 +10,7 @@ categories: Android
 需要在清单文件中添加权限
 3、写个回调接口
 4、BaseActivity实现这个接口
-```
+``` java
 /**
  *
  * @author Chad 判断网络工具类

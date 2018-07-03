@@ -7,7 +7,7 @@ categories: Android
 2，集成友盟SDK  参看官方文档http://dev.umeng.com/push/android/integration#1
 3，若开发者需要实现对消息的完全自定义处理，则可以继承 UmengBaseIntentService, 实现自己的Service来完全控制达到消息的处理。
     1,实现一个类，继承 UmengBaseIntentService， 重写onMessage(Context context, Intent intent) 方法，并请调用super.onMessage(context, intent)。参考 demo 应用中MyPushIntentService。请参考下面代码：
-```    
+``` java
 /**
  * 友盟推送服务
  */
