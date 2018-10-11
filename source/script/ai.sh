@@ -64,7 +64,7 @@ function restart () {
 # config supervisord for ai server and start ai server
 function configSupervisord () {
   if [ -e "/etc/supervisord.conf" ]; then 
-      grep "[program:ia]" /etc/supervisord.conf > /dev/null
+      grep "[program:ai]" /etc/supervisord.conf > /dev/null
       if [ $? -eq 0 ]; then
         echo "Found supervisord.conf for ai!"
         start
