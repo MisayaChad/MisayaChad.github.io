@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>运维进程管理supervisorctl使用 | Misaya Chad Blogs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用 supervisor 管理进程Supervisor (http://supervisord.org) 是一个用 Python 写的进程管理工具，可以很方便的用来启动、重启、关闭进程（不仅仅是 Python 进程）。除了对单个进程的控制，还可以同时启动、关闭多个进程，比如很不幸的服务器出问题导致所有应用程序都被杀死，此时可以用 supervisor 同时启动所有应用程序而不是一个一个地敲命令启">
+<meta property="og:type" content="article">
+<meta property="og:title" content="运维进程管理supervisorctl使用">
+<meta property="og:url" content="http://misayachad.github.io/2018/09/10/运维进程管理supervisorctl使用/index.html">
+<meta property="og:site_name" content="Misaya Chad Blogs">
+<meta property="og:description" content="使用 supervisor 管理进程Supervisor (http://supervisord.org) 是一个用 Python 写的进程管理工具，可以很方便的用来启动、重启、关闭进程（不仅仅是 Python 进程）。除了对单个进程的控制，还可以同时启动、关闭多个进程，比如很不幸的服务器出问题导致所有应用程序都被杀死，此时可以用 supervisor 同时启动所有应用程序而不是一个一个地敲命令启">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-06-07T09:22:32.147Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="运维进程管理supervisorctl使用">
+<meta name="twitter:description" content="使用 supervisor 管理进程Supervisor (http://supervisord.org) 是一个用 Python 写的进程管理工具，可以很方便的用来启动、重启、关闭进程（不仅仅是 Python 进程）。除了对单个进程的控制，还可以同时启动、关闭多个进程，比如很不幸的服务器出问题导致所有应用程序都被杀死，此时可以用 supervisor 同时启动所有应用程序而不是一个一个地敲命令启">
+  
+    <link rel="alternate" href="/atom.xml" title="Misaya Chad Blogs" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Misaya Chad Blogs</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Chad的个人技术博客</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://misayachad.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-运维进程管理supervisorctl使用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/10/运维进程管理supervisorctl使用/" class="article-date">
+  <time datetime="2018-09-10T13:13:20.000Z" itemprop="datePublished">2018-09-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux运维/">Linux运维</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      运维进程管理supervisorctl使用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="使用-supervisor-管理进程"><a href="#使用-supervisor-管理进程" class="headerlink" title="使用 supervisor 管理进程"></a>使用 supervisor 管理进程</h3><p>Supervisor (<a href="http://supervisord.org" target="_blank" rel="external">http://supervisord.org</a>) 是一个用 Python 写的进程管理工具，可以很方便的用来启动、重启、关闭进程（不仅仅是 Python 进程）。除了对单个进程的控制，还可以同时启动、关闭多个进程，比如很不幸的服务器出问题导致所有应用程序都被杀死，此时可以用 supervisor 同时启动所有应用程序而不是一个一个地敲命令启动。（后台启动，不会占用终端）</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>Supervisor 可以运行在 Linux、Mac OS X 上。如前所述，supervisor 是 Python 编写的，所以安装起来也很方便，可以直接用 pip安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo pip install supervisor</div><div class="line">如果是 Ubuntu 系统，还可以使用 apt-get 安装。</div></pre></td></tr></table></figure>
+<h4 id="supervisord-配置"><a href="#supervisord-配置" class="headerlink" title="supervisord 配置"></a>supervisord 配置</h4><p>Supervisor 相当强大，提供了很丰富的功能，不过我们可能只需要用到其中一小部分。安装完成之后，可以编写配置文件，来满足自己的需求。为了方便，我们把配置分成两部分：supervisord（supervisor 是一个 C/S 模型的程序，这是 server 端，对应的有 client 端：supervisorctl）和应用程序（即我们要管理的程序）。</p>
+<p>首先来看 supervisord 的配置文件。安装完 supervisor 之后，可以运行echo_supervisord_conf 命令输出默认的配置项，也可以重定向到一个配置文件里</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo_supervisord_conf &gt; /etc/supervisord.conf</div></pre></td></tr></table></figure>
+<p>去除里面大部分注释和“不相关”的部分，我们可以先看这些配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">[unix_http_server]</div><div class="line">file=/tmp/supervisor.sock   ; UNIX socket 文件，supervisorctl 会使用</div><div class="line">;chmod=0700                 ; socket 文件的 mode，默认是 0700</div><div class="line">;chown=nobody:nogroup       ; socket 文件的 owner，格式： uid:gid</div><div class="line"></div><div class="line">;[inet_http_server]         ; HTTP 服务器，提供 web 管理界面</div><div class="line">;port=127.0.0.1:9001        ; Web 管理后台运行的 IP 和端口，如果开放到公网，需要注意安全性</div><div class="line">;username=user              ; 登录管理后台的用户名</div><div class="line">;password=123               ; 登录管理后台的密码</div><div class="line"></div><div class="line">[supervisord]</div><div class="line">logfile=/tmp/supervisord.log ; 日志文件，默认是 $CWD/supervisord.log</div><div class="line">logfile_maxbytes=50MB        ; 日志文件大小，超出会 rotate，默认 50MB</div><div class="line">logfile_backups=10           ; 日志文件保留备份数量默认 10</div><div class="line">loglevel=info                ; 日志级别，默认 info，其它: debug,warn,trace</div><div class="line">pidfile=/tmp/supervisord.pid ; pid 文件</div><div class="line">nodaemon=false               ; 是否在前台启动，默认是 false，即以 daemon 的方式启动</div><div class="line">minfds=1024                  ; 可以打开的文件描述符的最小值，默认 1024</div><div class="line">minprocs=200                 ; 可以打开的进程数的最小值，默认 200</div><div class="line"></div><div class="line">; the below section must remain in the config file for RPC</div><div class="line">; (supervisorctl/web interface) to work, additional interfaces may be</div><div class="line">; added by defining them in separate rpcinterface: sections</div><div class="line">[rpcinterface:supervisor]</div><div class="line">supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface</div><div class="line"></div><div class="line">[supervisorctl]</div><div class="line">serverurl=unix:///tmp/supervisor.sock ; 通过 UNIX socket 连接 supervisord，路径与 unix_http_server 部分的 file 一致</div><div class="line">;serverurl=http://127.0.0.1:9001 ; 通过 HTTP 的方式连接 supervisord</div><div class="line"></div><div class="line">; 包含其他的配置文件</div><div class="line">[include]</div><div class="line">files = relative/directory/*.ini    ; 可以是 *.conf 或 *.ini</div></pre></td></tr></table></figure>
+<p>我们把上面这部分配置保存到 /etc/supervisord.conf（或其他任意有权限访问的文件），然后启动 supervisord（通过 -c 选项指定配置文件路径，如果不指定会按照这个顺序查找配置文件：$CWD/supervisord.conf, $CWD/etc/supervisord.conf, /etc/supervisord.conf）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">supervisord -c /etc/supervisord.conf</div></pre></td></tr></table></figure>
+<p>查看 supervisord 是否在运行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps aux | grep supervisord</div></pre></td></tr></table></figure></p>
+<h4 id="program-配置"><a href="#program-配置" class="headerlink" title="program 配置"></a>program 配置</h4><p>上面我们已经把 supervisrod 运行起来了，现在可以添加我们要管理的进程的配置文件。这些配置可以都写到 supervisord.conf 文件里，如果应用程序很多，最好通过 include 的方式把不同的程序（组）写到不同的配置文件里。</p>
+<p>为了举例，我们新建一个目录 /etc/supervisor/ 用于存放这些配置文件，相应的，把 /etc/supervisord.conf 里 include 部分的的配置修改一下：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[include]</div><div class="line">files = /etc/supervisor/*.conf</div></pre></td></tr></table></figure></p>
+<p>假设有个用 Flask 开发的用户系统 usercenter, 生产环境使用 gunicorn 运行。项目代码位于 /home/leon/projects/usercenter，WSGI 对象位于 wsgi.py。在命令行启动的方式是这样的：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /home/leon/projects/usercenter</div><div class="line">gunicorn -w 8 -b 0.0.0.0:17510 wsgi:app</div></pre></td></tr></table></figure></p>
+<p>对应的配置文件可能是：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">[program:usercenter]</div><div class="line">directory = /home/leon/projects/usercenter ; 程序的启动目录</div><div class="line">command = gunicorn -w 8 -b 0.0.0.0:17510 wsgi:app  ; 启动命令</div><div class="line">autostart = true     ; 在 supervisord 启动的时候也自动启动</div><div class="line">startsecs = 5        ; 启动 5 秒后没有异常退出，就当作已经正常启动了</div><div class="line">autorestart = true   ; 程序异常退出后自动重启</div><div class="line">startretries = 3     ; 启动失败自动重试次数，默认是 3</div><div class="line">user = leon          ; 用哪个用户启动</div><div class="line">redirect_stderr = true  ; 把 stderr 重定向到 stdout，默认 false</div><div class="line">stdout_logfile_maxbytes = 20MB  ; stdout 日志文件大小，默认 50MB</div><div class="line">stdout_logfile_backups = 20     ; stdout 日志文件备份数</div><div class="line">; stdout 日志文件，需要注意当指定目录不存在时无法正常启动，所以需要手动创建目录（supervisord 会自动创建日志文件）</div><div class="line">stdout_logfile = /data/logs/usercenter_stdout.log</div></pre></td></tr></table></figure></p>
+<p>其中 [program:usercenter] 中的 usercenter 是应用程序的唯一标识，不能重复。对该程序的所有操作（start, restart 等）都通过名字来实现。</p>
+<h4 id="使用-supervisorctl"><a href="#使用-supervisorctl" class="headerlink" title="使用 supervisorctl"></a>使用 supervisorctl</h4><p>Supervisorctl 是 supervisord 的一个命令行客户端工具，启动时需要指定与 supervisord 使用同一份配置文件，否则与 supervisord 一样按照顺序查找配置文件。<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">supervisorctl -c /etc/supervisord.conf</div></pre></td></tr></table></figure></p>
+<p>上面这个命令会进入 supervisorctl 的 shell 界面，然后可以执行不同的命令了：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;</span> status    # 查看程序状态</div><div class="line"><span class="meta">&gt;</span> stop usercenter   # 关闭 usercenter 程序</div><div class="line"><span class="meta">&gt;</span> start usercenter  # 启动 usercenter 程序</div><div class="line"><span class="meta">&gt;</span> restart usercenter    # 重启 usercenter 程序</div><div class="line"><span class="meta">&gt;</span> reread    ＃ 读取有更新（增加）的配置文件，不会启动新添加的程序</div><div class="line"><span class="meta">&gt;</span> update    ＃ 重启配置文件修改过的程序</div></pre></td></tr></table></figure></p>
+<p>上面这些命令都有相应的输出，除了进入 supervisorctl 的 shell 界面，也可以直接在 bash 终端运行：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span> supervisorctl status</div><div class="line"><span class="meta">$</span> supervisorctl stop usercenter</div><div class="line"><span class="meta">$</span> supervisorctl start usercenter</div><div class="line"><span class="meta">$</span> supervisorctl restart usercenter</div><div class="line"><span class="meta">$</span> supervisorctl reread</div><div class="line"><span class="meta">$</span> supervisorctl update</div></pre></td></tr></table></figure></p>
+<p>refrence: <a href="http://supervisord.org/index.html" target="_blank" rel="external">http://supervisord.org/index.html</a></p>
+<p>公司实例supervisor config：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div></pre></td><td class="code"><pre><div class="line">; Sample supervisor config file.</div><div class="line">;</div><div class="line">; For more information on the config file, please see:</div><div class="line">; http://supervisord.org/configuration.html</div><div class="line">;</div><div class="line">; Notes:</div><div class="line">;  - Shell expansion ("~" or "$HOME") is not supported.  Environment</div><div class="line">;    variables can be expanded using this syntax: "%(ENV_HOME)s".</div><div class="line">;  - Comments must have a leading space: "a=b ;comment" not "a=b;comment".</div><div class="line"></div><div class="line">[unix_http_server]</div><div class="line">file=/tmp/supervisor.sock   ; (the path to the socket file)</div><div class="line">;chmod=0700                 ; socket file mode (default 0700)</div><div class="line">;chown=nobody:nogroup       ; socket file uid:gid owner</div><div class="line">;username=user              ; (default is no username (open server))</div><div class="line">;password=123               ; (default is no password (open server))</div><div class="line"></div><div class="line">;[inet_http_server]         ; inet (TCP) server disabled by default</div><div class="line">;port=127.0.0.1:9001        ; (ip_address:port specifier, *:port for all iface)</div><div class="line">;username=user              ; (default is no username (open server))</div><div class="line">;password=123               ; (default is no password (open server))</div><div class="line"></div><div class="line">[supervisord]</div><div class="line">logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)</div><div class="line">logfile_maxbytes=50MB        ; (max main logfile bytes b4 rotation;default 50MB)</div><div class="line">logfile_backups=10           ; (num of main logfile rotation backups;default 10)</div><div class="line">loglevel=info                ; (log level;default info; others: debug,warn,trace)</div><div class="line">pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)</div><div class="line">nodaemon=false               ; (start in foreground if true;default false)</div><div class="line">minfds=1024                  ; (min. avail startup file descriptors;default 1024)</div><div class="line">minprocs=200                 ; (min. avail process descriptors;default 200)</div><div class="line">;umask=022                   ; (process file creation umask;default 022)</div><div class="line">;user=chrism                 ; (default is current user, required if root)</div><div class="line">;identifier=supervisor       ; (supervisord identifier, default is 'supervisor')</div><div class="line">;directory=/tmp              ; (default is not to cd during start)</div><div class="line">;nocleanup=true              ; (don't clean up tempfiles at start;default false)</div><div class="line">;childlogdir=/tmp            ; ('AUTO' child log dir, default $TEMP)</div><div class="line">;environment=KEY="value"     ; (key value pairs to add to environment)</div><div class="line">;strip_ansi=false            ; (strip ansi escape codes in logs; def. false)</div><div class="line"></div><div class="line">; the below section must remain in the config file for RPC</div><div class="line">; (supervisorctl/web interface) to work, additional interfaces may be</div><div class="line">; added by defining them in separate rpcinterface: sections</div><div class="line">[rpcinterface:supervisor]</div><div class="line">supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface</div><div class="line"></div><div class="line">[supervisorctl]</div><div class="line">serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket</div><div class="line">;serverurl=http://127.0.0.1:9001 ; use an http:// url to specify an inet socket</div><div class="line">;username=chris              ; should be same as http_username if set</div><div class="line">;password=123                ; should be same as http_password if set</div><div class="line">;prompt=mysupervisor         ; cmd line prompt (default "supervisor")</div><div class="line">;history_file=~/.sc_history  ; use readline history if available</div><div class="line"></div><div class="line">; The below sample program section shows all possible program subsection values,</div><div class="line">; create one or more 'real' program: sections to be able to control them under</div><div class="line">; supervisor.</div><div class="line"></div><div class="line">;[program:theprogramname]</div><div class="line">;command=/bin/cat              ; the program (relative uses PATH, can take args)</div><div class="line">;process_name=%(program_name)s ; process_name expr (default %(program_name)s)</div><div class="line">;numprocs=1                    ; number of processes copies to start (def 1)</div><div class="line">;directory=/tmp                ; directory to cwd to before exec (def no cwd)</div><div class="line">;umask=022                     ; umask for process (default None)</div><div class="line">;priority=999                  ; the relative start priority (default 999)</div><div class="line">;autostart=true                ; start at supervisord start (default: true)</div><div class="line">;startsecs=1                   ; # of secs prog must stay up to be running (def. 1)</div><div class="line">;startretries=3                ; max # of serial start failures when starting (default 3)</div><div class="line">;autorestart=unexpected        ; when to restart if exited after running (def: unexpected)</div><div class="line">;exitcodes=0,2                 ; 'expected' exit codes used with autorestart (default 0,2)</div><div class="line">;stopsignal=QUIT               ; signal used to kill process (default TERM)</div><div class="line">;stopwaitsecs=10               ; max num secs to wait b4 SIGKILL (default 10)</div><div class="line">;stopasgroup=false             ; send stop signal to the UNIX process group (default false)</div><div class="line">;killasgroup=false             ; SIGKILL the UNIX process group (def false)</div><div class="line">;user=chrism                   ; setuid to this UNIX account to run the program</div><div class="line">;redirect_stderr=true          ; redirect proc stderr to stdout (default false)</div><div class="line">;stdout_logfile=/a/path        ; stdout log path, NONE for none; default AUTO</div><div class="line">;stdout_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)</div><div class="line">;stdout_logfile_backups=10     ; # of stdout logfile backups (default 10)</div><div class="line">;stdout_capture_maxbytes=1MB   ; number of bytes in 'capturemode' (default 0)</div><div class="line">;stdout_events_enabled=false   ; emit events on stdout writes (default false)</div><div class="line">;stderr_logfile=/a/path        ; stderr log path, NONE for none; default AUTO</div><div class="line">;stderr_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)</div><div class="line">;stderr_logfile_backups=10     ; # of stderr logfile backups (default 10)</div><div class="line">;stderr_capture_maxbytes=1MB   ; number of bytes in 'capturemode' (default 0)</div><div class="line">;stderr_events_enabled=false   ; emit events on stderr writes (default false)</div><div class="line">;environment=A="1",B="2"       ; process environment additions (def no adds)</div><div class="line">;serverurl=AUTO                ; override serverurl computation (childutils)</div><div class="line"></div><div class="line">; The below sample eventlistener section shows all possible</div><div class="line">; eventlistener subsection values, create one or more 'real'</div><div class="line">; eventlistener: sections to be able to handle event notifications</div><div class="line">; sent by supervisor.</div><div class="line"></div><div class="line">;[eventlistener:theeventlistenername]</div><div class="line">;command=/bin/eventlistener    ; the program (relative uses PATH, can take args)</div><div class="line">;process_name=%(program_name)s ; process_name expr (default %(program_name)s)</div><div class="line">;numprocs=1                    ; number of processes copies to start (def 1)</div><div class="line">;events=EVENT                  ; event notif. types to subscribe to (req'd)</div><div class="line">;buffer_size=10                ; event buffer queue size (default 10)</div><div class="line">;directory=/tmp                ; directory to cwd to before exec (def no cwd)</div><div class="line">;umask=022                     ; umask for process (default None)</div><div class="line">;priority=-1                   ; the relative start priority (default -1)</div><div class="line">;autostart=true                ; start at supervisord start (default: true)</div><div class="line">;startsecs=1                   ; # of secs prog must stay up to be running (def. 1)</div><div class="line">;startretries=3                ; max # of serial start failures when starting (default 3)</div><div class="line">;autorestart=unexpected        ; autorestart if exited after running (def: unexpected)</div><div class="line">;exitcodes=0,2                 ; 'expected' exit codes used with autorestart (default 0,2)</div><div class="line">;stopsignal=QUIT               ; signal used to kill process (default TERM)</div><div class="line">;stopwaitsecs=10               ; max num secs to wait b4 SIGKILL (default 10)</div><div class="line">;stopasgroup=false             ; send stop signal to the UNIX process group (default false)</div><div class="line">;killasgroup=false             ; SIGKILL the UNIX process group (def false)</div><div class="line">;user=chrism                   ; setuid to this UNIX account to run the program</div><div class="line">;redirect_stderr=false         ; redirect_stderr=true is not allowed for eventlisteners</div><div class="line">;stdout_logfile=/a/path        ; stdout log path, NONE for none; default AUTO</div><div class="line">;stdout_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)</div><div class="line">;stdout_logfile_backups=10     ; # of stdout logfile backups (default 10)</div><div class="line">;stdout_events_enabled=false   ; emit events on stdout writes (default false)</div><div class="line">;stderr_logfile=/a/path        ; stderr log path, NONE for none; default AUTO</div><div class="line">;stderr_logfile_maxbytes=1MB   ; max # logfile bytes b4 rotation (default 50MB)</div><div class="line">;stderr_logfile_backups=10     ; # of stderr logfile backups (default 10)</div><div class="line">;stderr_events_enabled=false   ; emit events on stderr writes (default false)</div><div class="line">;environment=A="1",B="2"       ; process environment additions</div><div class="line">;serverurl=AUTO                ; override serverurl computation (childutils)</div><div class="line"></div><div class="line">; The below sample group section shows all possible group values,</div><div class="line">; create one or more 'real' group: sections to create "heterogeneous"</div><div class="line">; process groups.</div><div class="line"></div><div class="line">;[group:thegroupname]</div><div class="line">;programs=progname1,progname2  ; each refers to 'x' in [program:x] definitions</div><div class="line">;priority=999                  ; the relative start priority (default 999)</div><div class="line"></div><div class="line">; The [include] section can just contain the "files" setting.  This</div><div class="line">; setting can list multiple files (separated by whitespace or</div><div class="line">; newlines).  It can also contain wildcards.  The filenames are</div><div class="line">; interpreted as relative to this file.  Included files *cannot*</div><div class="line">; include files themselves.</div><div class="line"></div><div class="line">;[include]</div><div class="line">;files = relative/directory/*.ini</div><div class="line"></div><div class="line">[program:listener]</div><div class="line">command=/opt/gopath/listener start -c /opt/gopath/service.yaml</div><div class="line">[program:rewarder]</div><div class="line">command=/opt/gopath/rewarder start -c /opt/gopath/service-rewarder.yaml</div><div class="line">[program:ai]</div><div class="line">command=python /opt/CNN-Classifier/manage.py runserver 0.0.0.0:8000</div></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://misayachad.github.io/2018/09/10/运维进程管理supervisorctl使用/" data-id="ckcly4vm1000mt4us220f6f1b" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/05/20/超级账本 Hyperledger Fabric2.0 多机集群部署/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          超级账本 Hyperledger Fabric2.0 多机集群部署
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/01/问题/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ethereum/">Ethereum</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaEE/">JavaEE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux运维/">Linux运维</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/区块链/">区块链</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/宝典/">宝典</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">八月 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">五月 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/05/20/超级账本 Hyperledger Fabric2.0 多机集群部署/">超级账本 Hyperledger Fabric2.0 多机集群部署</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/10/运维进程管理supervisorctl使用/">运维进程管理supervisorctl使用</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/01/问题/">问题</a>
+          </li>
+        
+          <li>
+            <a href="/2018/06/10/Android刘海屏适配/">Android刘海屏适配</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/10/Java消息服务/">Java消息服务</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 MisayaChad<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
