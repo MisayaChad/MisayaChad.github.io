@@ -13,7 +13,7 @@
 <meta property="og:description" content="我们需要将容器分发到4个主机，本教程使用的是局域网下的四台主机。系统为Ubuntu和centos均可以。可以自己随便设置，保证能互相联通 在Fabric网络启动运行后，我们将使用Fabcar链码进行测试。总体流程如下：准备4台可以互相通信的主机，均为linu内核。构建一个叠加网络，将4个主机都加入该网络在主机1上准备所有资料，包括密码学资料、通道配置交易、每个节点的docker-compose文件">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://misayachad.github.io/images/fabric2.0多机集群部署结构.jpg">
-<meta property="og:updated_time" content="2020-07-14T12:32:07.864Z">
+<meta property="og:updated_time" content="2020-07-14T13:13:18.698Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="超级账本 Hyperledger Fabric2.0 多机集群部署">
 <meta name="twitter:description" content="我们需要将容器分发到4个主机，本教程使用的是局域网下的四台主机。系统为Ubuntu和centos均可以。可以自己随便设置，保证能互相联通 在Fabric网络启动运行后，我们将使用Fabcar链码进行测试。总体流程如下：准备4台可以互相通信的主机，均为linu内核。构建一个叠加网络，将4个主机都加入该网络在主机1上准备所有资料，包括密码学资料、通道配置交易、每个节点的docker-compose文件">
@@ -190,12 +190,12 @@
 <p>输出值为100</p>
 <p>调用 invoke方法， a -&gt;b 转账20<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">peer chaincode invoke -o orderer.example.com:7050 --tls true \</div><div class="line">--cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem \</div><div class="line">-C mychannel -n mycc1 --peerAddresses peer0.org1.example.com:7051 \</div><div class="line">--tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt \</div><div class="line">--peerAddresses peer0.org2.example.com:7051 \</div><div class="line">--tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt  \</div><div class="line">-c  '&#123;"Args":["invoke","a","b","20"]&#125;'</div></pre></td></tr></table></figure></p>
 <p>再次查询a时，输出为80</p>
-<p>对应raft-4node-swarm代码已上传到git<br>本文档参考 <a href="https://uzshare.com/view/825034" target="_blank" rel="external">https://uzshare.com/view/825034</a> ,做了更详细的实践说明</p>
+<p>对应raft-4node-swarm代码已上传到git <a href="https://github.com/MisayaChad/raft-4node-swarm.git" target="_blank" rel="external">https://github.com/MisayaChad/raft-4node-swarm.git</a><br>本文档参考 <a href="https://uzshare.com/view/825034" target="_blank" rel="external">https://uzshare.com/view/825034</a> ,做了更详细的实践说明</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://misayachad.github.io/2020/05/20/超级账本 Hyperledger Fabric2.0 多机集群部署/" data-id="ckcly4vm0000kt4us4qkvdy3s" class="article-share-link">Share</a>
+      <a data-url="http://misayachad.github.io/2020/05/20/超级账本 Hyperledger Fabric2.0 多机集群部署/" data-id="ckclyj7zd000lnousdka4ng3t" class="article-share-link">Share</a>
       
       
     </footer>
